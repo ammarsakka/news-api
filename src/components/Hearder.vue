@@ -6,7 +6,7 @@
             <p class="text-2xl uppercase font-bold">logo</p>
             <nav>
                 <ul class="flex items-center justify-center gap-2 capitalize font-semibold">
-                    <li><a href="#">home</a></li>
+                    <li><a href="/">home</a></li>
                 </ul>
             </nav>
         </div>

@@ -1,7 +1,7 @@
 import './assets/main.css'
 
 import { createApp } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import App from './App.vue'
 import { createHead } from '@vueuse/head'
 
@@ -9,7 +9,7 @@ import Home from './Home.vue'
 import Post from './Post.vue'
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHashHistory(),
     routes: [
         { name: 'Home', path: '/', component: Home },
         { name: 'Post', path: '/post/:title', component: Post }
