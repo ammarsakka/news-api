@@ -3,6 +3,8 @@ import Header from './components/Hearder.vue'
 import { useRoute } from 'vue-router'
 import { onMounted, ref } from 'vue';
 import moment from 'moment';
+import { useHead } from '@vueuse/head'
+
 const title = useRoute().params.title
 
 const news = ref([])
@@ -15,33 +17,40 @@ const handleNews = async () => {
     })
     // console.log(data)
     news.value = data.articles
+
+    useHead({
+        title: `Ammar News - ${data.articles[0].title}`,
+        meta: [
+            { name: 'description', content: data.articles[0].description },
+            { name: 'twitter:image', content:  data.articles[0].urlToImage ? data.articles[0].urlToImage : '/images/favicon.jpg'},
+            { name: 'twitter:image:alt', content:  data.articles[0].title},
+        ]
+    })
 }
 
-onMounted(handleNews)
+onMounted(() => {
+    handleNews()
+})
 </script>
 
 <template>
     <Header />
     <main>
         <div class="">
-            <div v-for="post in news" :key="post.title" class="gap-2 grid p-4 w-full mx-auto max-w-5xl">
-                <div class="flex items-start gap-4 p-2 shadow rounded">
-                    <div class="w-1/3 h-60 rounded overflow-hidden shadow">
+            <div v-for="post in news" :key="post.title" class="grid p-4 w-full mx-auto max-w-5xl">
+                <div class="grid gap-4 p-2">
+                    <div class="w-full h-auto rounded overflow-hidden shadow">
                         <img :src="post.urlToImage ? post.urlToImage : '/images/favicon.jpg'" :alt="post.title"
                             class="w-full h-full object-cover">
                     </div>
                     <div class="w-2/3 h-full flex flex-col gap-2 justify-between">
                         <div>
-                            <h2 class="text-lg font-semibold">{{ post.title }}</h2>
+                            <h2 class="text-3xl font-semibold">{{ post.title }}</h2>
                             <div class="flex items-center gap-2 mb-4 text-sm font-light">
                                 <p>{{ post.author }},</p>
                                 <p>{{ moment(post.publishedAt).format('MMM DD, Y') }}</p>
                             </div>
-                            <p>{{ post.description }}</p>
-                        </div>
-                        <div class="mb-1">
-                            <a :href="'/post/' + post.title"
-                                class="px-4 py-2 capitalize bg-black text-white rounded-full font-semibold">read more</a>
+                            <p class="text-lg">{{ post.content }}</p>
                         </div>
                     </div>
                 </div>
