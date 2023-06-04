@@ -1,33 +1,52 @@
-<script setup>
+<script>
 import Header from './components/Hearder.vue'
-import { ref, onMounted } from 'vue'
-import moment from 'moment'
 
-const news = ref([])
-
-const handleNews = async () => {
-    const data = await fetch('https://newsdata2.p.rapidapi.com/news?language=en', {
-        method: 'GET', headers: {
-            'X-RapidAPI-Key': 'b52a40ec8bmshe260931ab62b61cp10d6abjsnf8ebb9b28a3a',
-            'X-RapidAPI-Host': 'newsdata2.p.rapidapi.com'
+export default {
+    data() {
+        return {
+            loading: false,
+            news: [],
+            error: null
         }
-    }).then((data) => {
-        return data.json()
-    }).then((result) => {
-        return result
-    })
-    // console.log(data.results)
-    news.value = data.results
-}
+    },
+    created() {
+        this.$watch(
+            () => this.$route.params,
+            () => { this.fetchData() },
+            { immediate: true }
+        )
+    },
+    methods: {
+        async fetchData() {
+            this.loading = true
 
-onMounted(() => {
-    handleNews()
-})
+            const data = await fetch('https://newsdata2.p.rapidapi.com/news?language=en', {
+                method: 'GET', headers: {
+                    'X-RapidAPI-Key': 'b52a40ec8bmshe260931ab62b61cp10d6abjsnf8ebb9b28a3a',
+                    'X-RapidAPI-Host': 'newsdata2.p.rapidapi.com'
+                }
+            }).then((data) => {
+                return data.json()
+            }).then((result) => {
+                this.loading = false
+                return result
+            })
+
+            this.news = data.results
+        }
+    },
+    components: {
+        'v-header': Header
+    },
+    metaInfo: {
+        title: 'hello'
+    }
+}
 
 </script>
 
 <template>
-    <Header />
+    <v-header />
     <main>
         <div class="">
             <div v-for="post in news" :key="post.title" class="gap-2 grid p-4 w-full mx-auto max-w-5xl">
@@ -41,7 +60,8 @@ onMounted(() => {
                             <h2 class="text-lg font-semibold">{{ post.title }}</h2>
                             <div class="flex items-center gap-2 mb-4 text-sm font-light">
                                 <p v-for="author in post.creator">{{ author }},</p>
-                                <p>{{ moment(post.pubDate).format('MMM DD, Y') }}</p>
+                                <!-- <p>{{ moment(post.pubDate).format('MMM DD, Y') }}</p> -->
+                                <p>{{ post.pubDate}}</p>
                             </div>
                             <p>{{ post.description }}</p>
                         </div>
@@ -52,5 +72,6 @@ onMounted(() => {
                     </div>
                 </div>
             </div>
-    </div>
-</main></template>
+        </div>
+    </main>
+</template>
